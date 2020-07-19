@@ -1,13 +1,15 @@
-const { default: Link } = require('next/link')
+import 'isomorphic-fetch'
+import Link from 'next/link'
 
-const Podcast = ({ clip }) => {
+const Podcast = (props) => {
+  const { audioClip } = props
   return (
     <div>
       <header>Podcasts</header>
       <div className="modal">
         <div className="clip">
           <nav>
-            <Link href={`/channel?id=${clip.channel.id}`}>
+            <Link href={`/channel?id=${audioClip.channel.id}`}>
               <a className="close">&lt; Volver</a>
             </Link>
           </nav>
@@ -16,17 +18,18 @@ const Podcast = ({ clip }) => {
             <div
               style={{
                 backgroundImage: `url(${
-                  clip.urls.image || clip.channel.urls.logo_image.original
+                  audioClip.urls.image ||
+                  audioClip.channel.urls.logo_image.original
                 })`
               }}
             />
           </picture>
 
           <div className="player">
-            <h3>{clip.title}</h3>
-            <h6>{clip.channel.title}</h6>
+            <h3>{audioClip.title}</h3>
+            <h6>{audioClip.channel.title}</h6>
             <audio controls autoPlay={true}>
-              <source srcs={clip.urls.high_mp3} type="audio/mpeg" />
+              <source srcs={audioClip.urls.high_mp3} type="audio/mpeg" />
             </audio>
           </div>
         </div>
@@ -104,9 +107,11 @@ const Podcast = ({ clip }) => {
   )
 }
 
-Podcast.getInitalProps = async ({ query }) => {
+Podcast.getInitialProps = async ({ query }) => {
   let id = query.id
   let fetchClip = await fetch(`https://api.audioboom.com/audio_clips/${id}.mp3`)
-  let clip = (await fetchClip.json()).body.audio_clip
-  return { clip }
+  let response = await fetchClip.json()
+  return { audioClip: response.body.audio_clip }
 }
+
+export default Podcast

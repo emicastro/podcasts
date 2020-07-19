@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 const Channel = ({ channel, audioClips, series }) => {
   return (
     <div>
@@ -7,11 +9,27 @@ const Channel = ({ channel, audioClips, series }) => {
 
       <h2>Ultimos Podcasts</h2>
       {audioClips.map((clip, key) => (
-        <div key={key}>{clip.title}</div>
+        <div key={key}>
+          <Link href={`/podcast?id=${clip.id}`} prefetch key={clip.id}>
+            <a className="podcast">
+              <h3>{clip.title}</h3>
+              <div className="meta">
+                {Math.ceil(clip.duration / 60)} minutes
+              </div>
+            </a>
+          </Link>
+        </div>
       ))}
       <h2>Series</h2>
       {series.map((serie, key) => (
-        <div key={key}>{serie.title}</div>
+        <div key={key}>
+          <Link href={`/channel?id=${serie.id}`} prefetch>
+            <a className="channel">
+              <img src={serie.urls.logo_image.original} alt="" />
+              <h2>{serie.title}</h2>
+            </a>
+          </Link>
+        </div>
       ))}
       <style jsx>
         {`
@@ -45,8 +63,9 @@ const Channel = ({ channel, audioClips, series }) => {
 
 Channel.getInitialProps = async ({ query }) => {
   let idChannel = query.id
-
-  let [reqChannel, reqAudio, reqSeries] = Promise.all([
+  console.log('hola')
+  console.log(idChannel)
+  let [reqChannel, reqAudio, reqSeries] = await Promise.all([
     fetch(`https://api.audioboom.com/channels/${idChannel}`),
     fetch(`https://api.audioboom.com/channels/${idChannel}/audio_clips`),
     fetch(`https://api.audioboom.com/channels/${idChannel}/child_channels`)
