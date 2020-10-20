@@ -1,8 +1,13 @@
-import 'isomorphic-fetch'
-import Link from 'next/link'
+import "isomorphic-fetch";
+import Link from "next/link";
 
 function App({ channels }) {
   return (
+
+    <Layout title="Podcasts">
+      <ChannelsGrid channels={channels}/>
+    </Layout>
+
     <>
       <header>Podcasts</header>
 
@@ -17,7 +22,8 @@ function App({ channels }) {
         ))}
       </div>
 
-      <style jsx>{`
+      <style jsx>
+        {`
         header {
           color: #fff;
           background: #8756ca;
@@ -50,24 +56,27 @@ function App({ channels }) {
           margin: 0;
           text-align: center;
         }
-      `}</style>
+      `}
+      </style>
 
-      <style jsx global>{`
+      <style jsx global>
+        {`
         body {
           margin: 0;
           background: white;
           font-family: system-ui;
         }
-      `}</style>
+      `}
+      </style>
     </>
-  )
+  );
 }
 
 export async function getServerSideProps() {
-  let req = await fetch('https://api.audioboom.com/channels/recommended')
-  let { body: channels } = await req.json()
+  let req = await fetch("https://api.audioboom.com/channels/recommended");
+  let { body: channels } = await req.json();
 
-  return { props: { channels: channels } }
+  return { props: { channels: channels } };
 }
 
-export default App
+export default App;
